@@ -53,6 +53,8 @@ void parser(int argc, char * argv[]) {
 			g_part_alloc = atoi( &argv[i][2] );
 		else if (argv[i][1] == 'm')
 			g_mem_pad = atoi( &argv[i][2] );
+		else if (argv[i][1] == 'x')
+			oltp_thread_cnt = atoi( &argv[i][2] );		
 		else if (argv[i][1] == 'q')
 			g_query_intvl = atoi( &argv[i][2] );
 		else if (argv[i][1] == 'c')

@@ -7,7 +7,7 @@
 #include "index_btree.h"
 #include "catalog.h"
 #include "mem_alloc.h"
-
+#include "concurrency_control/row_tictoc.h"
 RC workload::init() {
 	sim_done = false;
 	return RCOK;
@@ -17,7 +17,8 @@ RC workload::init_schema(string schema_file) {
     assert(sizeof(uint64_t) == 8);
     assert(sizeof(double) == 8);	
 	string line;
-	ifstream fin(schema_file);
+	ifstream fin;
+	fin.open(schema_file.c_str(),std::ios::in);
     Catalog * schema;
     while (getline(fin, line)) {
 		if (line.compare(0, 6, "TABLE=") == 0) {
@@ -119,6 +120,7 @@ void workload::index_insert(INDEX * index, uint64_t key, row_t * row, int64_t pa
 	m_item->init();
 	m_item->type = DT_row;
 	m_item->location = row;
+	m_item->location_ap = row->manager->_row_ap;
 	m_item->valid = true;
 
     assert( index->index_insert(key, m_item, pid) == RCOK );

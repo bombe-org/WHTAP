@@ -143,12 +143,16 @@ enum Data_type {DT_table, DT_page, DT_row };
 class itemid_t {
 public:
 	itemid_t() { };
-	itemid_t(Data_type type, void * loc) {
+	itemid_t(Data_type type, void * loc, void * loc_ap) {
         this->type = type;
         this->location = loc;
+	this->location_ap = loc_ap;
     };
 	Data_type type;
 	void * location; // points to the table | page | row
+	void * location_v1;
+	void * location_v2;
+	void * location_ap;
 	itemid_t * next;
 	bool valid;
 	void init();

@@ -10,8 +10,13 @@ double ycsb_query::denom = 0;
 
 void ycsb_query::init(uint64_t thd_id, workload * h_wl, Query_thd * query_thd) {
 	_query_thd = query_thd;
+	if(thd_id < oltp_thread_cnt)
 	requests = (ycsb_request *) 
 		mem_allocator.alloc(sizeof(ycsb_request) * g_req_per_query, thd_id);
+	else
+	requests = (ycsb_request *) 
+		mem_allocator.alloc(sizeof(ycsb_request) * g_req_per_query * factor_htap, thd_id);
+
 	part_to_access = (uint64_t *) 
 		mem_allocator.alloc(sizeof(uint64_t) * g_part_per_txn, thd_id);
 	zeta_2_theta = zeta(2, g_zipf_theta);
@@ -94,7 +99,8 @@ void ycsb_query::gen_requests(uint64_t thd_id, workload * h_wl) {
 		double r;
 		drand48_r(&_query_thd->buffer, &r);
 		ycsb_request * req = &requests[rid];
-		if (r < g_read_perc) {
+if(thd_id < oltp_thread_cnt)		
+if (r < g_read_perc) {
 			req->rtype = RD;
 		} else if (r >= g_read_perc && r <= g_write_perc + g_read_perc) {
 			req->rtype = WR;
@@ -102,6 +108,8 @@ void ycsb_query::gen_requests(uint64_t thd_id, workload * h_wl) {
 			req->rtype = SCAN;
 			req->scan_len = SCAN_LEN;
 		}
+else
+	req->rtype = RD;
 
 		// the request will access part_id.
 		uint64_t ith = tmp * part_num / g_req_per_query;
@@ -111,7 +119,7 @@ void ycsb_query::gen_requests(uint64_t thd_id, workload * h_wl) {
 		uint64_t row_id = zipf(table_size - 1, g_zipf_theta);
 		assert(row_id < table_size);
 		uint64_t primary_key = row_id * g_virtual_part_cnt + part_id;
-		req->key = primary_key;
+		req->key = primary_key % g_synth_table_size;
 		int64_t rint64;
 		lrand48_r(&_query_thd->buffer, &rint64);
 		req->value = rint64 % (1<<8);

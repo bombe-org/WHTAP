@@ -44,7 +44,7 @@ public:
 	workload * h_wl;
 	myrand * mrand;
 	uint64_t abort_cnt;
-
+	access_t rtype;
 	virtual RC 		run_txn(base_query * m_query) = 0;
 	uint64_t 		get_thd_id();
 	workload * 		get_wl();
@@ -109,7 +109,9 @@ private:
 	bool			_atomic_timestamp;
 	ts_t 			_max_wts;
 	// the following methods are defined in concurrency_control/tictoc.cpp
-	RC				validate_tictoc();
+	RC				validate_tictoc(int _pingpong);
+public:
+	int _pingpong;
 #elif CC_ALG == SILO
 	ts_t 			_cur_tid;
 	RC				validate_silo();

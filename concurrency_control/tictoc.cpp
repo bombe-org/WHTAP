@@ -6,7 +6,7 @@
 #if CC_ALG==TICTOC
 
 RC
-txn_man::validate_tictoc()
+txn_man::validate_tictoc(int _pingpong)
 {
 	RC rc = RCOK;
 	int write_set[wr_cnt];
@@ -238,7 +238,7 @@ final:
 			for (int i = 0; i < wr_cnt; i++) {
 				Access * access = accesses[ write_set[i] ];
 				access->orig_row->manager->write_data( 
-					access->data, commit_wts);
+					access->data, commit_wts, _pingpong);
 				access->orig_row->manager->release();
 			}
 #else 

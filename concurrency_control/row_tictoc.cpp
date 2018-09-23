@@ -7,9 +7,12 @@
 #if CC_ALG==TICTOC
 
 void 
-Row_tictoc::init(row_t * row)
+Row_tictoc::init(row_t * row, row_t *row_ap,row_t* row_v1,row_t* row_v2)
 {
 	_row = row;
+    _row_ap = row_ap;
+    _row_v1 = row_v1;
+    _row_v2 = row_v2;
 #if ATOMIC_WORD
 	_ts_word = 0;
 #else
@@ -62,7 +65,7 @@ Row_tictoc::access(txn_man * txn, TsType type, row_t * local_row)
 }
 
 void 
-Row_tictoc::write_data(row_t * data, ts_t wts)
+Row_tictoc::write_data(row_t * data, ts_t wts, int _pingpong)
 {
 #if ATOMIC_WORD
   	uint64_t v = _ts_word;
@@ -86,6 +89,24 @@ Row_tictoc::write_data(row_t * data, ts_t wts)
 	_wts = wts;
 	_rts = wts;
 	_row->copy(data);
+    uint64_t key = _row->get_primary_key();
+    if(_pingpong == 0){
+//        if (_row_v1 == NULL) {
+//            //_row_v1 = (row_t *) _mm_malloc(sizeof(row_t), 64);
+//            _row_v1 = (row_t *)malloc(sizeof(row_t));
+//            _row_v1->init(data->get_table(),data->get_part_id(),data->get_row_id());
+//        }
+        _row_v1->copy(data);
+        set0.insert(key);
+    } else if(_pingpong == 1){
+//        if (_row_v2 == NULL) {
+//            //_row_v1 = (row_t *) _mm_malloc(sizeof(row_t), 64);
+//            _row_v2 = (row_t *)malloc(sizeof(row_t));
+//            _row_v2->init(data->get_table(),data->get_part_id(),data->get_row_id());
+//        }
+        _row_v2->copy(data);
+        set1.insert(key);
+    }
 #endif
 }
 

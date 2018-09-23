@@ -212,7 +212,7 @@ RC txn_man::finish(RC rc) {
 		cleanup(rc);
 #elif CC_ALG == TICTOC
 	if (rc == RCOK)
-		rc = validate_tictoc();
+		rc = validate_tictoc(_pingpong);
 	else 
 		cleanup(rc);
 #elif CC_ALG == SILO

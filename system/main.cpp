@@ -1,3 +1,4 @@
+#include <storage/index_hash.h>
 #include "global.h"
 #include "ycsb.h"
 #include "tpcc.h"
@@ -16,7 +17,7 @@ thread_t ** m_thds;
 
 // defined in parser.cpp
 void parser(int argc, char * argv[]);
-
+void *state_controller(void *pWorkload);
 int main(int argc, char* argv[])
 {
 	parser(argc, argv);
@@ -87,6 +88,8 @@ int main(int argc, char* argv[])
 
 	// spawn and run txns again.
 	int64_t starttime = get_server_clock();
+    pthread_t state_thd;
+    pthread_create(&state_thd, NULL, state_controller, (void *) m_wl);
 	for (uint32_t i = 0; i < thd_cnt - 1; i++) {
 		uint64_t vid = i;
 		pthread_create(&p_thds[i], NULL, f, (void *)vid);
@@ -97,7 +100,7 @@ int main(int argc, char* argv[])
 	int64_t endtime = get_server_clock();
 	
 	if (WORKLOAD != TEST) {
-		printf("PASS! SimTime = %ld\n", endtime - starttime);
+		printf("PASS! SimTime = %f\n", 1.0*(endtime - starttime)/1000000000.0);
 		if (STATS_ENABLE)
 			stats.print();
 	} else {
@@ -110,4 +113,39 @@ void * f(void * id) {
 	uint64_t tid = (uint64_t)id;
 	m_thds[tid]->run();
 	return NULL;
+}
+void *state_controller(void *pWorkload) {
+    usleep(1);  //warmup
+    while (((workload *) pWorkload)->sim_done) {
+        global_state = NORMAL;
+        usleep(1);
+        global_state = TAKEN;
+        pingpong = 1 - pingpong;
+        usleep(10);
+        global_state = WAITING;
+        while (query_static_counter > 0);
+        global_state = COMPACTION;
+        if (pingpong == 0) {
+            IndexHash *index = ((ycsb_wl *) pWorkload)->the_index;
+            itemid_t *item;
+            for (set<uint64_t>::iterator itr = set1.begin(); itr != set1.end(); itr++) {
+                index->index_read(*itr, item, 0, 0);
+                ((row_t *) item->location_ap)->copy((row_t *) item->location_v2);
+                //free(item->location_v2);
+            }
+            set1.clear();
+        } else if (pingpong == 1) {
+            IndexHash *index = ((ycsb_wl *) pWorkload)->the_index;
+            itemid_t *item;
+            for (set<uint64_t>::iterator itr = set0.begin(); itr != set0.end(); itr++) {
+                index->index_read(*itr, item, 0, 0);
+                ((row_t *) item->location_ap)->copy((row_t *) item->location_v1);
+                //free(item->location_v1);
+            }
+            set0.clear();
+        }
+        global_state = COMPLETE;
+        while (query_delta_counter > 0);
+    }
+    return NULL;
 }

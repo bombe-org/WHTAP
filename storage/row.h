@@ -40,7 +40,7 @@ public:
 	void init(int size);
 	RC switch_schema(table_t * host_table);
 	// not every row has a manager
-	void init_manager(row_t * row);
+	void init_manager(row_t * row,row_t* row_ap,row_t* row_v1,row_t* row_v2);
 
 	table_t * get_table();
 	Catalog * get_schema();
