@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 	glob_manager->init();
 	if (g_cc_alg == DL_DETECT) 
 		dl_detector.init();
-	printf("mem_allocator initialized!\n");
+	//printf("mem_allocator initialized!\n");
 	workload * m_wl;
 	switch (WORKLOAD) {
 		case YCSB :
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 			assert(false);
 	}
 	m_wl->init();
-	printf("workload initialized!\n");
+	//printf("workload initialized!\n");
 	
 	uint64_t thd_cnt = g_thread_cnt;
 	pthread_t p_thds[thd_cnt - 1];
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
 	if (WORKLOAD != TEST)
 		query_queue->init(m_wl);
 	pthread_barrier_init( &warmup_bar, NULL, g_thread_cnt );
-	printf("query_queue initialized!\n");
+	//printf("query_queue initialized!\n");
 #if CC_ALG == HSTORE
 	part_lock_man.init();
 #elif CC_ALG == OCC
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 	int64_t endtime = get_server_clock();
 	
 	if (WORKLOAD != TEST) {
-		printf("PASS! SimTime = %f\n", 1.0*(endtime - starttime)/1000000000.0);
+		printf("%f,", 1.0*(endtime - starttime)/1000000000.0);
 		if (STATS_ENABLE)
 			stats.print();
 	} else {

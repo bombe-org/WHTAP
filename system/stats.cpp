@@ -138,13 +138,13 @@ void Stats::print() {
 		total_time_ts_alloc += _stats[tid]->time_ts_alloc;
 		total_latency += _stats[tid]->latency;
 		total_time_query += _stats[tid]->time_query;
-		
+	/*	
 		printf("[tid=%ld] txn_cnt=%ld,abort_cnt=%ld\n", 
 			tid,
 			_stats[tid]->txn_cnt,
 			_stats[tid]->abort_cnt
 		);
-	}
+	*/}
     uint64_t oltp_txn_cnt = 0;
     uint64_t olap_txn_cnt = 0;
     for (uint64_t tid = 0; tid < oltp_thread_cnt; tid ++) {
