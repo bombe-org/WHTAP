@@ -121,7 +121,7 @@
 #define SCAN_PERC 					0
 #define SCAN_LEN					20
 #define PART_PER_TXN 				1
-#define PERC_MULTI_PART				1
+#define PERC_MULTI_PART				0
 #define REQ_PER_QUERY				16
 #define FIELD_PER_TUPLE				10
 // ==== [TPCC] ====

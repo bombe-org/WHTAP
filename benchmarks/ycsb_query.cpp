@@ -72,6 +72,12 @@ void ycsb_query::gen_requests(uint64_t thd_id, workload * h_wl) {
 	int64_t rint64 = 0;
 	drand48_r(&_query_thd->buffer, &r);
 	lrand48_r(&_query_thd->buffer, &rint64);
+	
+	UInt32 query_count = g_req_per_query;
+	if (thd_id >= oltp_thread_cnt)
+		query_count = g_req_per_query * factor_htap;
+	
+	
 	if (r < g_perc_multi_part) {
 		for (UInt32 i = 0; i < g_part_per_txn; i++) {
 			if (i == 0 && FIRST_PART_LOCAL)
@@ -95,9 +101,7 @@ void ycsb_query::gen_requests(uint64_t thd_id, workload * h_wl) {
 	}
 
 	int rid = 0;
-	UInt32 query_count = g_req_per_query;
-    if (thd_id >= oltp_thread_cnt)
-query_count = query_count * factor_htap;
+
 	for (UInt32 tmp = 0; tmp < query_count; tmp ++) {		
 		double r;
 		drand48_r(&_query_thd->buffer, &r);
@@ -115,7 +119,7 @@ else
 	req->rtype = RD;
 
 		// the request will access part_id.
-		uint64_t ith = tmp * part_num / g_req_per_query;
+		uint64_t ith = tmp * part_num / query_count;
 		uint64_t part_id = 
 			part_to_access[ ith ];
 		uint64_t table_size = g_synth_table_size / g_virtual_part_cnt;
@@ -165,5 +169,6 @@ else
 	}
 
 }
+
 
 
