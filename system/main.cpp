@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 	pthread_barrier_init( &warmup_bar, NULL, g_thread_cnt );
 
 	// spawn and run txns again.
-	int64_t starttime = get_server_clock();
+	//int64_t starttime = get_server_clock();
 	for (uint32_t i = 0; i < thd_cnt - 1; i++) {
 		uint64_t vid = i;
 		pthread_create(&p_thds[i], NULL, f, (void *)vid);
@@ -94,10 +94,10 @@ int main(int argc, char* argv[])
 	f((void *)(thd_cnt - 1));
 	for (uint32_t i = 0; i < thd_cnt - 1; i++) 
 		pthread_join(p_thds[i], NULL);
-	int64_t endtime = get_server_clock();
+	//int64_t endtime = get_server_clock();
 	
 	if (WORKLOAD != TEST) {
-		printf("PASS! SimTime = %ld\n", endtime - starttime);
+		// printf("PASS! SimTime = %ld\n", endtime - starttime);
 		if (STATS_ENABLE)
 			stats.print();
 	} else {

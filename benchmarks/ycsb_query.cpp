@@ -10,7 +10,7 @@ double ycsb_query::denom = 0;
 
 void ycsb_query::init(uint64_t thd_id, workload * h_wl, Query_thd * query_thd) {
 	_query_thd = query_thd;
-	if(thd_id < oltp_thread_cnt)
+	if(thd_id < (uint64_t)oltp_thread_cnt)
 	requests = (ycsb_request *) 
 		mem_allocator.alloc(sizeof(ycsb_request) * g_req_per_query, thd_id);
 	else
@@ -74,7 +74,7 @@ void ycsb_query::gen_requests(uint64_t thd_id, workload * h_wl) {
 	lrand48_r(&_query_thd->buffer, &rint64);
 	
 	UInt32 query_count = g_req_per_query;
-	if (thd_id >= oltp_thread_cnt)
+	if (thd_id >= (uint64_t)oltp_thread_cnt)
 		query_count = g_req_per_query * factor_htap;
 	
 	
@@ -106,7 +106,7 @@ void ycsb_query::gen_requests(uint64_t thd_id, workload * h_wl) {
 		double r;
 		drand48_r(&_query_thd->buffer, &r);
 		ycsb_request * req = &requests[rid];
-if(thd_id < oltp_thread_cnt)		
+if(thd_id < (uint64_t)oltp_thread_cnt)		
 if (r < g_read_perc) {
 			req->rtype = RD;
 		} else if (r >= g_read_perc && r <= g_write_perc + g_read_perc) {

@@ -147,7 +147,7 @@ void Stats::print() {
 	*/}
     uint64_t oltp_txn_cnt = 0;
     uint64_t olap_txn_cnt = 0;
-    for (uint64_t tid = 0; tid < oltp_thread_cnt; tid ++) {
+    for (uint64_t tid = 0; tid < (uint64_t)oltp_thread_cnt; tid ++) {
         oltp_txn_cnt += _stats[tid]->txn_cnt;
     }
     for (uint64_t tid = oltp_thread_cnt; tid < g_thread_cnt; tid ++) {

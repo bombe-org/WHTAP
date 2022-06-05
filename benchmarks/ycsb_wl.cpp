@@ -91,11 +91,11 @@ ins_done:
 void ycsb_wl::init_table_parallel() {
 	enable_thread_mem_pool = true;
 	pthread_t p_thds[load_parallelism - 1];
-	for (UInt32 i = 0; i < load_parallelism - 1; i++) 
+	for (UInt32 i = 0; i < (uint32_t)load_parallelism - 1; i++) 
 		pthread_create(&p_thds[i], NULL, threadInitTable, this);
 	threadInitTable(this);
 
-	for (uint32_t i = 0; i < load_parallelism - 1; i++) {
+	for (uint32_t i = 0; i < (uint32_t)load_parallelism - 1; i++) {
 		int rc = pthread_join(p_thds[i], NULL);
 		if (rc) {
 			printf("ERROR; return code from pthread_join() is %d\n", rc);
@@ -114,9 +114,9 @@ void * ycsb_wl::init_table_slice() {
 	mem_allocator.register_thread(tid);
 	RC rc;
 	assert(g_synth_table_size % load_parallelism == 0);
-	assert(tid < load_parallelism);
-	while ((UInt32)ATOM_FETCH_ADD(next_tid, 0) < load_parallelism) {}
-	assert((UInt32)ATOM_FETCH_ADD(next_tid, 0) == load_parallelism);
+	assert(tid < (uint64_t)load_parallelism);
+	while ((UInt32)ATOM_FETCH_ADD(next_tid, 0) < (uint64_t)load_parallelism) {}
+	assert((UInt32)ATOM_FETCH_ADD(next_tid, 0) == (uint64_t)load_parallelism);
 	uint64_t slice_size = g_synth_table_size / load_parallelism;
 	for (uint64_t key = slice_size * tid; 
 			key < slice_size * (tid + 1); 
