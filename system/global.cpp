@@ -19,6 +19,18 @@ OptCC occ_man;
 VLLMan vll_man;
 #endif 
 
+int pingpong = 0;
+DBSTATE global_state = NORMAL;
+int factor_htap = 8;
+int oltp_thread_cnt = 4;
+int query_static_counter = 0;
+int query_delta_counter = 0;
+std::set<uint64_t> set0;
+std::set<uint64_t> set1;
+
+
+
+
 bool volatile warmup_finish = false;
 bool volatile enable_thread_mem_pool = false;
 pthread_barrier_t warmup_bar;
