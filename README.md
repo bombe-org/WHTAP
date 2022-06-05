@@ -1,24 +1,23 @@
-DBx1000
+WHTAP
 =======
 
-DBx1000 is an single node OLTP database management system (DBMS). The goal of DBx1000 is to make DBMS scalable on future 1000-core processors. We implemented all the seven classic concurrency control schemes in DBx1000. They exhibit different scalability properties under different workloads. 
+WHTAP is a HTAP prototype, which was originally proposed in the following paper.
 
-The concurrency control scalability study is described in the following paper. 
-
-    Staring into the Abyss: An Evaluation of Concurrency Control with One Thousand Cores
-    Xiangyao Yu, George Bezerra, Andrew Pavlo, Srinivas Devadas, Michael Stonebraker
-    http://www.vldb.org/pvldb/vol8/p209-yu.pdf
+    Liang Li, Gang Wu, Guoren Wang, Ye Yuan: Accelerating Hybrid Transactional/Analytical Processing 
+    Using Consistent Dual-Snapshot. DASFAA (1) 2019: 52-69
     
-Build & Test
+Code-Branches
+------------
+
+- _master_ branch is the WHTAP impementation, NOTE that CC_ALG must be set as TICTOC, since WHTAP is based on TICTOC
+- _compare_ branch is some related algorithms.
+
+Build
 ------------
 
 To build the database.
 
     make -j
-
-To test the database
-
-    python test.py
     
 Configuration
 -------------
@@ -40,4 +39,14 @@ Run
 
 The DBMS can be run with 
 
-    ./rundb
+    ./rundb -r0.5 -w0.5 -z0.9 -R16 -l3 -t16 -x8
+
+
+Acknowledgment to [DBx1000](https://github.com/yxymit/DBx1000)
+------------
+
+First of all, WHTAP is base on the DBx1000 project, which is an single node OLTP database management system (DBMS). The goal of DBx1000 is to make DBMS scalable on future 1000-core processors. We implemented all the seven classic concurrency control schemes in DBx1000. They exhibit different scalability properties under different workloads. The concurrency control scalability study is described in the following paper. 
+
+    Staring into the Abyss: An Evaluation of Concurrency Control with One Thousand Cores
+    Xiangyao Yu, George Bezerra, Andrew Pavlo, Srinivas Devadas, Michael Stonebraker
+    http://www.vldb.org/pvldb/vol8/p209-yu.pdf
