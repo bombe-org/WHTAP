@@ -27,7 +27,7 @@ public:
 
 	uint64_t request_cnt;
 	ycsb_request * requests;
-
+	access_t rtype;
 private:
 	void gen_requests(uint64_t thd_id, workload * h_wl);
 	// for Zipfian distribution

@@ -138,22 +138,30 @@ void Stats::print() {
 		total_time_ts_alloc += _stats[tid]->time_ts_alloc;
 		total_latency += _stats[tid]->latency;
 		total_time_query += _stats[tid]->time_query;
-		
+	/*	
 		printf("[tid=%ld] txn_cnt=%ld,abort_cnt=%ld\n", 
 			tid,
 			_stats[tid]->txn_cnt,
 			_stats[tid]->abort_cnt
 		);
-	}
+	*/}
+    uint64_t oltp_txn_cnt = 0;
+    uint64_t olap_txn_cnt = 0;
+    for (uint64_t tid = 0; tid < oltp_thread_cnt; tid ++) {
+        oltp_txn_cnt += _stats[tid]->txn_cnt;
+    }
+    for (uint64_t tid = oltp_thread_cnt; tid < g_thread_cnt; tid ++) {
+        olap_txn_cnt += _stats[tid]->txn_cnt;
+    }
 	FILE * outf;
 	if (output_file != NULL) {
 		outf = fopen(output_file, "w");
-		fprintf(outf, "[summary] txn_cnt=%ld, abort_cnt=%ld"
+		fprintf(outf, "[summary] txn_cnt=%ld, oltp_cnt=%ld, olap_cnt=%ld, abort_cnt=%ld"
 			", run_time=%f, time_wait=%f, time_ts_alloc=%f"
 			", time_man=%f, time_index=%f, time_abort=%f, time_cleanup=%f, latency=%f"
 			", deadlock_cnt=%ld, cycle_detect=%ld, dl_detect_time=%f, dl_wait_time=%f"
 			", time_query=%f, debug1=%f, debug2=%f, debug3=%f, debug4=%f, debug5=%f\n",
-			total_txn_cnt, 
+			total_txn_cnt, oltp_txn_cnt, olap_txn_cnt,
 			total_abort_cnt,
 			total_run_time / BILLION,
 			total_time_wait / BILLION,
@@ -176,12 +184,12 @@ void Stats::print() {
 		);
 		fclose(outf);
 	}
-	printf("[summary] txn_cnt=%ld, abort_cnt=%ld"
+	/*printf("[summary] txn_cnt=%ld, oltp_cnt=%ld, olap_cnt=%ld, abort_cnt=%ld"
 		", run_time=%f, time_wait=%f, time_ts_alloc=%f"
 		", time_man=%f, time_index=%f, time_abort=%f, time_cleanup=%f, latency=%f"
 		", deadlock_cnt=%ld, cycle_detect=%ld, dl_detect_time=%f, dl_wait_time=%f"
 		", time_query=%f, debug1=%f, debug2=%f, debug3=%f, debug4=%f, debug5=%f\n", 
-		total_txn_cnt, 
+		total_txn_cnt, oltp_txn_cnt, olap_txn_cnt,
 		total_abort_cnt,
 		total_run_time / BILLION,
 		total_time_wait / BILLION,
@@ -201,6 +209,10 @@ void Stats::print() {
 		total_debug3, // / BILLION,
 		total_debug4, // / BILLION,
 		total_debug5  // / BILLION 
+	);*/
+	printf("%ld,%ld,%ld,%ld\n"
+		,total_txn_cnt, oltp_txn_cnt, olap_txn_cnt,
+		total_abort_cnt
 	);
 	if (g_prt_lat_distr)
 		print_lat_distr();

@@ -5,8 +5,10 @@ void print_usage() {
 	printf("[usage]:\n");
 	printf("\t-pINT       ; PART_CNT\n");
 	printf("\t-vINT       ; VIRTUAL_PART_CNT\n");
-	printf("\t-tINT       ; THREAD_CNT\n");
+	printf("\t-tINT       ; TOTAL_THREAD_CNT\n");
 	printf("\t-qINT       ; QUERY_INTVL\n");
+	printf("\t-xINT       ; OLTP_THREAD_CNT\n");
+	printf("\t-lINT       ; OLAP/OLTP's length\n");
 	printf("\t-dINT       ; PRT_LAT_DISTR\n");
 	printf("\t-aINT       ; PART_ALLOC (0 or 1)\n");
 	printf("\t-mINT       ; MEM_PAD (0 or 1)\n");
@@ -53,6 +55,10 @@ void parser(int argc, char * argv[]) {
 			g_part_alloc = atoi( &argv[i][2] );
 		else if (argv[i][1] == 'm')
 			g_mem_pad = atoi( &argv[i][2] );
+		else if (argv[i][1] == 'x')
+			oltp_thread_cnt = atoi( &argv[i][2] );		
+		else if (argv[i][1] == 'l')
+			factor_htap = atoi( &argv[i][2] );		
 		else if (argv[i][1] == 'q')
 			g_query_intvl = atoi( &argv[i][2] );
 		else if (argv[i][1] == 'c')
